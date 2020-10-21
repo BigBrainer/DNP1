@@ -1,8 +1,7 @@
 ﻿@page "/families"
-@namespace ViewComponent
-@using Viewing
+@namespace ManageService
 @using Models
-@inject IViewService ViewService
+@inject IFamilyService IFamilyService
 @attribute [Authorize(Policy = "MustBeAtLeastSecurityLevel1")]
 
 @if (families == null)
@@ -44,7 +43,7 @@ else
 
     protected override void OnInitialized()
     {
-        families = ViewService.LoadFamily();
+        families = IFamilyService.LoadFamily();
     }
 
     private int CalculateMembers(int i)

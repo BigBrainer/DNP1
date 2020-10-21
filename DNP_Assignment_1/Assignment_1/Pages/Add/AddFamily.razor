@@ -2,7 +2,7 @@
 @namespace ManageService
 @using Models
 @attribute [Authorize(Policy = "MustBeAdministrator")]
-@inject IAddService IAddService
+@inject IFamilyService IFamilyService
 @inject NavigationManager NavigationManager
 
 
@@ -57,7 +57,7 @@
     {
         try
         {
-            ((AddService)IAddService).AddressTakenCheck(Family);
+            (IFamilyService).AddressTakenCheck(Family);
             ShowAdultForm = true;
             errorMessage = "";
         }
@@ -69,7 +69,7 @@
 
     private void Submit()
     {
-        if (!ShowNextForm)
+        if (ShowNextForm == false)
         {
             if (child1.ValidateChild())
             {
@@ -90,7 +90,7 @@
 
     private void Save()
     {
-        ((AddService)IAddService).AddAdults(Family, Adults);
+        IFamilyService.AddAdults(Family, Adults);
         NavigationManager.NavigateTo("/");
     }
 }

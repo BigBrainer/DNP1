@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace ManageService
 {
-    public class AddService : IAddService
+    public class FamilyService : IFamilyService
     {
         private FileContext fileContext;
-        public AddService()
+        public FamilyService()
         {
             fileContext = new FileContext();
         }
@@ -60,8 +60,27 @@ namespace ManageService
 
         private int LastId()
         {
-            int last = fileContext.Families.Max(fam => fam.Adults.Max((Adult ad) => ad.Id));
+            int last = 1;
+            foreach (Family fam in fileContext.Families.Where(fam => fam.Adults.Any()))
+            {
+                last = fam.Adults.Max((Adult ad) => ad.Id);
+            }
             return last;
+        }
+        public void RemoveMember(Family familyToRemoveFrom, int adultId)
+        {
+            string streetName = familyToRemoveFrom.StreetName;
+            int houseNumber = familyToRemoveFrom.HouseNumber;
+            Family family = fileContext.Families.FirstOrDefault((fam) => fam.HouseNumber == houseNumber && fam.StreetName.Equals(streetName, StringComparison.InvariantCultureIgnoreCase));
+            int familyIndex = fileContext.Families.IndexOf(family);
+            var adultToRemove = family.Adults.FirstOrDefault((ad) => ad.Id == adultId);
+            fileContext.Families[familyIndex].Adults.Remove(adultToRemove);
+            fileContext.SaveChanges();
+        }
+        public List<Family> LoadFamily()
+        {
+            return (List<Family>)fileContext.Families;
         }
     }
 }
+

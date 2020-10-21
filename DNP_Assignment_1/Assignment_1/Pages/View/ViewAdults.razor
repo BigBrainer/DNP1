@@ -1,10 +1,8 @@
 ﻿@page "/adults"
 @namespace ViewComponent
-@using Viewing
 @using Models
 @using ManageService
-@inject IViewService ViewService
-@inject IRemoveService IRemoveService
+@inject IFamilyService IFamilyService
 @attribute [Authorize(Policy = "MustBeAtLeastSecurityLevel1")]
 <h3></h3>
 
@@ -51,7 +49,7 @@ else
             {
                 @foreach (Adult adult in fam.Adults.Where(ad =>
                {
-                   return (FilterByAge) && ad.Age.ToString().Equals(AgeToFilter) || (FilterByName) && ad.LastName.Contains(NameToFilter, StringComparison.InvariantCultureIgnoreCase) || (!FilterByAge) && (!FilterByName);
+                   return (FilterByAge) && ad.Age.ToString().Contains(AgeToFilter) || (FilterByName) && ad.LastName.Contains(NameToFilter, StringComparison.InvariantCultureIgnoreCase) || (!FilterByAge) && (!FilterByName);
 
                }
       ))
@@ -114,7 +112,7 @@ else
 
     protected override void OnInitialized()
     {
-        families = ViewService.LoadFamily();
+        families = IFamilyService.LoadFamily();
     }
 
     private void RemoveAdult(int id)
@@ -127,7 +125,7 @@ else
                 familyToRemoveFrom.Adults.RemoveAt(i);
             }
         }
-        ((RemoveService)IRemoveService).RemoveMember(familyToRemoveFrom, id);
+        IFamilyService.RemoveMember(familyToRemoveFrom, id);
     }
 
     private void TurnOffFilter()

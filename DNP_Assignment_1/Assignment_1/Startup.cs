@@ -13,7 +13,6 @@ using Assignment_1.Data;
 using Microsoft.AspNetCore.Components.Authorization;
 using Assignment_1.Data.Impl;
 using System.Security.Claims;
-using Viewing;
 using ManageService;
 
 namespace Assignment_1
@@ -35,9 +34,7 @@ namespace Assignment_1
             services.AddServerSideBlazor();
             services.AddScoped<IAuthenticationService, AuthenticationService>();
             services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
-            services.AddSingleton<IViewService, ViewService>();
-            services.AddSingleton<IAddService, AddService>();
-            services.AddSingleton<IRemoveService, RemoveService>();
+            services.AddSingleton<IFamilyService, FamilyService>();
 
             services.AddAuthorization(options =>
             {

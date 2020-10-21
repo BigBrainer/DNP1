@@ -68,7 +68,7 @@ public class ValidSex : ValidationAttribute
     {
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
-            if(value.ToString().Equals("male") || value.ToString().Equals("female"))
+            if(value.ToString().Equals("M") || value.ToString().Equals("F"))
             { 
                 return ValidationResult.Success;
             }
