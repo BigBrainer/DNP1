@@ -1,0 +1,32 @@
+﻿@page "/AddToDo"
+@using Blazor_ToDo.Models
+@using Blazor_ToDo.Data
+@inject IToDoService ToDoService
+@inject NavigationManager NavigationManager
+
+<h3>AddToDo</h3>
+<EditForm Model="@newToDoItem" OnValidSubmit="@AddNewToDo">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <div class="form-group">
+        User Id: <br />
+        <InputNumber @bind-Value="newToDoItem.UserId" />
+    </div>
+    <div class="form-group">
+        Title: <br />
+        <InputTextArea @bind-Value="newToDoItem.Title" />
+    </div>
+    <p class="actions">
+        <button class="btn btn-outline-dark">Create</button>
+    </p>
+</EditForm>
+
+@code {
+    private ToDo newToDoItem = new ToDo();
+
+    private void AddNewToDo()
+    {
+        ToDoService.AddToDo(newToDoItem);
+        NavigationManager.NavigateTo("/Todos");
+    }
+}

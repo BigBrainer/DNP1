@@ -1,0 +1,36 @@
+﻿@inherits LayoutComponentBase
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@using Assignment_1.Data.Impl
+
+<div class="sidebar">
+    <NavMenu />
+</div>
+
+<div class="main">
+    <AuthorizeView>
+        <Authorized>
+            <div class="top-row px-4">
+                <div>@errorMessage</div>
+                <a @onclick="PerformLogout" href="/">Logout</a>
+            </div>
+        </Authorized>
+    </AuthorizeView>
+    <div class="content px-4">
+        @Body
+    </div>
+</div>
+
+@code{
+    private string errorMessage;
+    public async Task PerformLogout()
+    {
+        try
+        {
+            ((CustomAuthenticationStateProvider)AuthenticationStateProvider).Logout();
+        }
+        catch(Exception e)
+        {
+            errorMessage = e.Message;
+        }
+    }
+}
