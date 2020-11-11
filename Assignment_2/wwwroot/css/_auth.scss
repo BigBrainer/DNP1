@@ -1,0 +1,20 @@
+﻿@mixin flexCenter{
+    position:relative;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.login-div {
+    height: 100px;
+    @include flexCenter();
+}
+
+
+.form-group{
+    padding-right:20px;
+}
+
+.register-div{
+   
+}

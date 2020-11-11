@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="Family.css">
+        <title>My test page</title>
+    </head>
+    <body>
+        <h2>Family Data Web API Documentation</h2>
+
+        <h3>Adult</h3>
+        <section>
+            The Adult is sent back and forth as json.<br>
+            The json format is seen in the example below:<br>
+            <pre>
+{
+    "JobTitle": "Tutor", 
+    "ID": 0,
+    "FirstName": "Aryan",
+    "LastName": "Gifford",
+    "HairColor": "Black",
+    "EyeColor": "Brown",
+    "Age": 56,
+    "Weight": 99.2,
+    "Height": 172,
+    "Sex": "M"
+}
+            </pre>
+
+        </section>
+        <table>
+            <tr>
+                <th>
+                    API
+                </th>
+                <th>
+                    Request
+                </th>
+                <th>
+                    Sub-path
+                </th>
+                <th>
+                    Description
+                </th>
+
+                <th>
+                    Exceptions
+                </th>
+            </tr>
+            <tr>
+                <th rowspan="5" class="API">/Adults</th>
+                <td rowspan="2">GET</td>
+                <td>/{id:int}</td>
+                <td>
+                    <section class="description">
+                        This request will return an Adult. <br>
+                        {id} is an integer. <br>
+                        Example:
+
+                        <ul class="example"> 
+                            <li>.../Adults/3</li>
+                            <li>.../Adults/7</li>
+                            <li>.../Adults?id=5</li>
+                        </ul>
+                    </section>
+                </td>
+
+                <td>
+                    May return 404 Not Found, if the provided ID did not match any Adults.
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <section class="description">
+                        This request will return a collection of Adults. <br>
+                        This request takes an optional number of the following request parameters:
+                        <ul>
+                            <li>firstname</li>
+                            <li>lastname</li>
+                            <li>jobtitle <i>- spaces in URL are either - or %20</i></li>
+                            <li>
+                                haircolor<br>
+                                <b>valid values:</b>
+                                [brown, blond, red, black, white, grey, blue, green, leverpostej]
+                            </li>
+                            <li>eyecolor<br>
+                                <b>valid values:</b>
+                                [brown, grey, green, blue, amber, hazel]
+                            </li>
+                            <li>sex:F/M</li>
+                            <li>age</li>
+                            <li>id</li>
+                        </ul>
+                        Example:
+                        <ul class="example">
+                            <li>.../Adults</li>
+                            <li>.../Adults?firstname=jens&amp;haircolor=black&amp;jobtitle=engineer</li>
+                            <li>.../Adults?lastname=petersen&amp;eyecolor=green</li>
+                            <li>.../Adults?jobtitle=police-officer</li>
+                            <li>.../Adults?jobtitle=police%20officer</li>
+                        </ul>
+                    </section>
+                </td>
+
+                <td>
+                    May return 500 Internal Server Error, if something fails.
+                </td>
+            </tr>
+
+            <tr>
+                <td>PUT</td>
+                <td></td>
+                <td>
+                    <section class="description">
+                        Use this to create a new Adult. Returns the created Adult. Provide the Adult as json in the request body.<br>
+                        Example:
+                        <ul class="example">
+                            <li>.../Adults </li>
+                        </ul>
+                    </section>
+                </td>
+                <td>
+                    <p>
+                        May return 400 Bad Request, if the data is invalid.<br>
+                        May return 500 Internal Server Error, if something fails when creating the adult.
+                    </p>
+                </td>
+            </tr>
+            <tr>
+                <td>DELETE</td>
+                <td>/{id:int}</td>
+                <td>
+                    <section class="description">
+                        Use this to delete an Adult. Provide the <b>id</b> for the Adult to delete. Returns the deleted Adult.<br>
+                        Example:
+                        <ul class="example">
+                            <li>.../Adults/5 </li>
+                            <li>.../Adults?id=3</li>
+                        </ul>
+                    </section>
+                </td>
+                <td>
+                    <p>
+                        May return 404 Bad Request, an Adult was not found with the provided id.<br>
+                        May return 500 Internal Server Error, if something fails when creating the adult.
+                    </p>
+                </td>
+            </tr>
+            <tr>
+                <td>PATCH</td>
+                <td></td>
+                <td>
+                    <section class="description">
+                        Use this to update an Adult. Provide the Adult as json in the request body; all fields will be updated. Returns the updated Adult.<br>
+                        Example:
+                        <ul class="example">
+                            <li>.../Adults/5 </li>
+                        </ul>
+                    </section>
+                </td>
+                <td>
+                    <p>
+                        May return 400 Bad Request, if the data is invalid.<br>
+                        May return 404 Not Found, if an Adult with the specified ID was not found.
+                    </p>
+                </td>
+            </tr>
+
+
+        </table>
+
+        <!-- Interests below -->
+
+        <br>
+        <h3>Interest</h3>
+        <section>
+            The format of an interest is just a string, when sending back and forth. However, the Interest of a child is a class, containing a string.
+        </section>
+        <table>
+            <tr>
+                <th>
+                    API
+                </th>
+                <th>
+                    Request
+                </th>
+                <th>
+                    Sub-path
+                </th>
+                <th>
+                    Description
+                </th>
+
+                <th>
+                    Exceptions
+                </th>
+            </tr>
+            <tr>
+                <th rowspan="2" class="API">/Interests</th>
+                <td>GET</td>
+                <td></td>
+                <td>
+                    <section class="description">
+                        Use this to get a collection of all interests.<br>
+                        Example:
+                        <ul class="example">
+                            <li>.../Interests</li>
+                        </ul>
+                    </section>
+                </td>
+                <td>
+                    May return 500 Internal Server Error, if something fails.
+                </td>
+            </tr>
+            <tr>
+                <td>PUT</td>
+                <td>/{interest:string}</td>
+                <td>
+                    <section class="description">
+                        Use this to create a new type of Interest. Provide the <b>interest</b> in the URL<i> - spaces in URL are either - or %20</i><br>
+                        Example:
+                        <ul class="example">
+                            <li>.../Interests/Foosball</li>
+                            <li>.../Interests/Chess</li>
+                            <li>.../Interests/Gaming</li>
+                            <li>.../Interests/Jumping-Jacks</li>
+                        </ul>
+                    </section>
+                </td>
+                <td>
+                    May return 400 Bad Request, if the request did not succeed.
+                </td>
+            </tr>
+        </table>
+
+        <!-- Pet below -->
+
+        <br>
+        <h3>Pet</h3>
+        <section>
+            The Pet is sent back and forth as json. A new Pet can only be created through a Family as a Family-pet, or through a Child in a Family, as a Child-pet. Thus, there is no POST or PUT request available for Pets.<br>
+            The format of a Pet is seen in the example below:
+            <pre>
+{
+    "ID": 0,
+    "Species": "Cat",
+    "Name": "Cassie",
+    "Age": 6
+}
+            </pre>
+        </section>
+        <table>
+            <tr>
+                <th>
+                    API
+                </th>
+                <th>
+                    Request
+                </th>
+                <th>
+                    Sub-path
+                </th>
+                <th>
+                    Description
+                </th>
+
+                <th>
+                    Exceptions
+                </th>
+            </tr>
+            <tr>
+                <th rowspan="2" class="API">/Interests</th>
+                <td>GET</td>
+                <td></td>
+                <td>
+                    <section class="description">
+                        Use this to get a collection of Pets.<br>
+                        This request takes an option number of the following request parameters:
+                        <ul>
+                            <li>species<i> - spaces in URL are either - or %20</i></li>
+                            <li>age</li>
+                        </ul>
+                        Example:
+                        <ul class="example">
+                            <li>.../Pets?species=cat</li>
+                            <li>.../Pets?species=dog&amp;age=4</li>
+                            <li>.../Pets?age=2</li>
+                            <li>.../Pets?species=guinea-pig</li>
+                        </ul>
+                    </section>
+                </td>
+                <td>
+                    May return 500 Internal Server Error, if something fails.
+                </td>
+            </tr>
+            <tr>
+                <td>DELETE</td>
+                <td>/{id:int}</td>
+                <td>
+                    <section class="description">
+                        Use this to delete a Pet. Provide the <b>id</b> in the URL. Alternatively the <b>id</b> can be provided through the query. The deleted Pet is returned.
+                        Example:
+                        <ul class="example">
+                            <li>.../Pets/3</li>
+                            <li>.../Pets?id=2</li>
+                        </ul>
+                    </section>
+                </td>
+                <td>
+                    May return 400 Bad Request, if the request did not succeed.
+                </td>
+            </tr>
+        </table>
+
+        <!-- Child below -->
+
+        <br>
+        <h3>Child</h3>
+        <section>
+            The Child is sent back and forth as json. <br>
+            The format of a Child is seen in the example below. A child has a collection of ChildInterests, and a collection of Pets.
+            <pre>
+{
+    "ChildInterests": [
+        {
+            "InterestId": "Handball"
+        },
+        {
+            "InterestId": "Mountain Biking"
+        },
+        {
+            "InterestId": "Bowling"
+        }
+    ],
+    "Pets": [
+        {
+            "ID": 0,
+            "Species": "Rat",
+            "Name": "Twinkle",
+            "Age": 4
+        }
+    ],
+    "ID": 0,
+    "FirstName": "Isabella",
+    "LastName": "Warren",
+    "HairColor": "Brown",
+    "EyeColor": "Brown",
+    "Age": 17,
+    "Weight": 47.940002,
+    "Height": 151,
+    "Sex": "F"
+},
+            </pre>
+        </section>
+        <table>
+            <tr>
+                <th>
+                    API
+                </th>
+                <th>
+                    Request
+                </th>
+                <th>
+                    Sub-path
+                </th>
+                <th>
+                    Description
+                </th>
+
+                <th>
+                    Exceptions
+                </th>
+            </tr>
+            <tr>
+                <th rowspan="4" class="API">/Children</th>
+                <td rowspan="2">GET</td>
+                <td>/{id:int}</td>
+                <td>
+                    <section class="description">
+                        Use this to get a single Child.<br>
+                        The <b>id</b> is provided through the URL. Alternatively the <b>id</b> is provided through the query.
+
+                        Example:
+                        <ul class="example">
+                            <li>.../Children/3</li>
+                            <li>.../Children?id=2</li>
+                        </ul>
+                    </section>
+                </td>
+                <td>
+                    May return 404 Not Found, if a Child with the provided ID is not found.
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <section class="description">
+                        Use this to get a collection of Children.<br>
+                        This request takes an option number of the following request parameters:
+                        <ul>
+                            <li>firstname</li>
+                            <li>lastname</li>
+                            <li>
+                                haircolor<br>
+                                <b>valid values:</b>
+                                [brown, blond, red, black, white, grey, blue, green, leverpostej]
+                            </li>
+                            <li>eyecolor<br>
+                                <b>valid values:</b>
+                                [brown, grey, green, blue, amber, hazel]
+                            </li>
+                            <li>sex:F/M</li>
+                            <li>age</li>
+                            <li>id</li>
+                            <li>interests<i> - spaces in URL are either - or %20</i></li>
+                        </ul>
+                        The interests parameter is a list, so you can specify multiple interests, see example below.<br>
+                        Example:
+                        <ul class="example">
+                            <li>.../Children?lastname=johnson&amp;haircolor=blond</li>
+                            <li>.../Children?interests=soccer&amp;interests=bowling</li>
+                        </ul>
+                    </section>
+                </td>
+                <td>
+                    May return 500 Internal Server Error, if something fails.
+                </td>
+            </tr>
+            <tr>
+                <td>PUT</td>
+                <td></td>
+                <td>
+                    <section class="description">
+                        Use this to add a Child. Provide the Child as json in the request body. The created Child is returned.<br>
+                        Example:
+                        <ul class="example">
+                            <li>.../Children</li>
+                        </ul>
+                    </section>
+                </td>
+                <td>
+                    May return 400 Bad Request, if the Child is not valid.<br>
+                    May return 500 Internal Server Error, if the request failed.
+                </td>
+            </tr>
+            <tr>
+                <td>DELETE</td>
+                <td>/{id:int}</td>
+                <td>
+                    <section class="description">
+                        Use this to delete a Child. Provide the <b>id</b> in the URL. Alternatively the <b>id</b> can be provided through the query. The deleted Child is returned.
+                        Example:
+                        <ul class="example">
+                            <li>.../Children/3</li>
+                            <li>.../Children?id=2</li>
+                        </ul>
+                    </section>
+                </td>
+                <td>
+                    May return 404 Not Found, if a Child with the provided id was not found.
+                    May return 500 Internal Server Error, if something fails.
+                </td>
+            </tr>
+        </table>
+
+        <!-- Family below -->
+
+        <br>
+        <h3>Family</h3>
+        <section>
+            The Family is sent back and forth as json. <br>
+            The format of a Family is seen in the example below. A Family has a collection of Adults, a collection of Children, and a collection of Pets.
+            <pre>
+{
+    "ID": 0,
+    "StreetName": "Eastern Cestaand",
+    "HouseNumber": 1,
+    "Adults": [
+        {
+            "JobTitle": "Science Teacher",
+            "ID": 0,
+            "FirstName": "Harper",
+            "LastName": "Knapp",
+            "HairColor": "Black",
+            "EyeColor": "Brown",
+            "Age": 46,
+            "Weight": 74.4,
+            "Height": 176,
+            "Sex": "M"
+        },
+        {
+            "JobTitle": "Business Reporter",
+            "ID": 0,
+            "FirstName": "Anali",
+            "LastName": "Warren",
+            "HairColor": "Black",
+            "EyeColor": "Brown",
+            "Age": 49,
+            "Weight": 93,
+            "Height": 165,
+            "Sex": "F"
+        }
+    ],
+    "Children": [
+        {
+            "ChildInterests": [
+                {
+                    "InterestId": "Paiting"
+                }
+            ],
+            "Pets": [
+
+            ],
+            "ID": 0,
+            "FirstName": "Florence",
+            "LastName": "Warren",
+            "HairColor": "Brown",
+            "EyeColor": "Brown",
+            "Age": 27,
+            "Weight": 48.11,
+            "Height": 144,
+            "Sex": "F"
+        },
+        {
+            "ChildInterests": [
+                {
+                    "InterestId": "Handball"
+                },
+                {
+                    "InterestId": "Mountain Biking"
+                },
+                {
+                    "InterestId": "Bowling"
+                }
+            ],
+            "Pets": [
+                {
+                    "ID": 1,
+                    "Species": "Rat",
+                    "Name": "Twinkle",
+                    "Age": 4
+                }
+            ],
+            "ID": 2,
+            "FirstName": "Isabella",
+            "LastName": "Warren",
+            "HairColor": "Brown",
+            "EyeColor": "Brown",
+            "Age": 17,
+            "Weight": 47.940002,
+            "Height": 151,
+            "Sex": "F"
+        }
+    ],
+    "Pets": [
+        {
+            "ID": 4,
+            "Species": "Dog",
+            "Name": "Barky",
+            "Age": 7
+        }
+    ]
+}
+            </pre>
+        </section>
+        <table>
+            <tr>
+                <th>
+                    API
+                </th>
+                <th>
+                    Request
+                </th>
+                <th>
+                    Sub-path
+                </th>
+                <th>
+                    Description
+                </th>
+
+                <th>
+                    Exceptions
+                </th>
+            </tr>
+            <tr>
+                <th rowspan="3" class="API">
+                    /Families
+                </th>
+                <td>GET</td>
+                <td></td>
+                <td>
+                    <section class="description">
+                        Use this to get a Collection of families.<br>
+                        This request takes an option number of the following request parameters:
+                        <ul>
+                            <li>streetname<i> - spaces in URL are either - or %20</i></li>
+                            <li>housenumber</li>
+                            <li>numberOfChildren</li>
+                            <li>numberOfParents</li>
+                        </ul>
+                        Example:
+                        <ul class="example">
+                            <li>.../Families?streetname</li>
+                        </ul>
+                    </section>
+                </td>
+                <td>
+                    May return 500 Internal Server Error, if something failed.
+                </td>
+            </tr>
+            <tr>
+                <td>PUT</td>
+                <td></td>
+                <td>
+                    <section class="description">
+                        Use this to create a new Family. Provide the Family as json in the request body.<br>
+                        Example:
+                        <ul class="example">
+                            <li>.../Families</li>
+                        </ul>
+                    </section>
+                </td>
+                <td>
+                    May return 400 Bad Request, if the provided Family is invalid.
+                    May return 500 Internal Server Error, if something failed.
+                </td>
+            </tr>
+            <tr>
+                <td>DELETE</td>
+                <td></td>
+                <td>
+                    <section class="description">
+                        Use this to delete a Family. The deleted family is returned. You must provide two query parameters:<br>
+                        <ul>
+                        <li>streetname</li>
+                        <li>housenumber</li>
+                        </ul>
+                        Example:
+                        <ul class="example">
+                            <li>.../Families?streetname=farvergade&amp;housenumber=3</li>
+                        </ul>
+                    </section>
+                </td>
+                <td>
+                    May return 400 Bad Request, if the parameters are invalid.
+                    May return a 404 Not Found, if the a Family was not found at the provided adress.
+                    May return 500 Internal Server Error, if something failed.
+                </td>
+            </tr>
+        </table>
+
+
+    </body>
+
+</html>

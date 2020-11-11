@@ -11,9 +11,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Assignment_1.Data;
 using Microsoft.AspNetCore.Components.Authorization;
-using Assignment_1.Data.Impl;
 using System.Security.Claims;
 using ManageService;
+using Assignment_1.Data.FamilyService;
+using Assignment_1.Authorization;
 
 namespace Assignment_1
 {
@@ -34,8 +35,7 @@ namespace Assignment_1
             services.AddServerSideBlazor();
             services.AddScoped<IAuthenticationService, AuthenticationService>();
             services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
-            services.AddSingleton<IFamilyService, FamilyService>();
-
+            services.AddSingleton<IFamilyService, FamilyServiceCloud>();
             services.AddAuthorization(options =>
             {
                 options.AddPolicy("MustBeAdministrator", a => a.RequireAuthenticatedUser().RequireClaim("Department", "Administrator"));

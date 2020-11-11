@@ -29,7 +29,7 @@ namespace Blazor_ToDo.Data
                 toDos = JsonSerializer.Deserialize<IList<ToDo>>(content);
             }
         }
-        public void AddToDo(ToDo toDo)
+        public async Task AddToDoAsync(ToDo toDo)
         {
             int max = toDos.Count > 0 ? toDos.Max(toDo => toDo.TodoId) : 0;
             toDo.TodoId = ++max;
@@ -37,16 +37,24 @@ namespace Blazor_ToDo.Data
             WriteToDosToFile();
         }
 
-        public IList<ToDo> GetToDos()
+        public async Task<IList<ToDo>> GetToDosAsync(bool? status, int? userId)
         {
             List<ToDo> tmp = new List<ToDo>(toDos);
-            return tmp;
+            List<ToDo> filteredToDos = tmp.Where(t => (userId != null && userId == t.UserId || userId == null) &&
+       (status != null && t.IsCompleted == status || status == null)).ToList();
+            return filteredToDos;
         }
 
-        public void RemoveToDo(int toDoId)
+        public async Task RemoveToDoAsync(int toDoId)
         {
             ToDo toRemove = toDos.First(t => t.TodoId == toDoId);
             toDos.Remove(toRemove);
+            WriteToDosToFile();
+        }
+        public async Task UpdateToDoAsync(ToDo toDo)
+        {
+            ToDo toUpdate = toDos.First(todo => todo.TodoId == toDo.TodoId);
+            toUpdate.IsCompleted = toDo.IsCompleted;
             WriteToDosToFile();
         }
 

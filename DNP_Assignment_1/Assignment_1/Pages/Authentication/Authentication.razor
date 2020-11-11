@@ -2,7 +2,7 @@
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @namespace AuthComponent
 @inject NavigationManager NavigationManager
-@using Assignment_1.Data.Impl
+@using Assignment_1.Authorization 
 
 <AuthorizeView>
     <NotAuthorized>
@@ -17,7 +17,7 @@
             </div>
             <div style="color:red; padding-bottom:5px;">@errorMessage</div>
             <div class="d-flex flex-column align-items-center">
-                <button class="btn-primary" @onclick="PerformLogin">
+                <button class="btn-primary" @onclick="PerformLoginAsync">
                     Login
                 </button>
                 <small class="text-muted" style="padding-top:5px;">No account yet?</small>
@@ -32,12 +32,12 @@
     private string password;
     private string errorMessage;
 
-    public async Task PerformLogin()
+    public async Task PerformLoginAsync()
     {
         errorMessage = "";
         try
         {
-            ((CustomAuthenticationStateProvider)AuthenticationStateProvider).ValidateLogin(username, password);
+            await ((CustomAuthenticationStateProvider) AuthenticationStateProvider).ValidateLogin(username, password);
             username = "";
             password = "";
             NavigationManager.NavigateTo("/");

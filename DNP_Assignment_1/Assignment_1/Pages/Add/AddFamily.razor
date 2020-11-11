@@ -2,11 +2,11 @@
 @namespace ManageService
 @using Models
 @attribute [Authorize(Policy = "MustBeAdministrator")]
-@inject IFamilyService IFamilyService
+@inject IFamilyService FamilyService
 @inject NavigationManager NavigationManager
 
 
-<EditForm Model="@Family" OnValidSubmit="Check">
+<EditForm Model="@Family" OnValidSubmit="async () => await CheckAsync()">
     <div class="container-fluid d-flex flex-column align-items-center">
         <h4>Family home</h4>
         <DataAnnotationsValidator />
@@ -46,6 +46,7 @@
     AddAdult child1;
     AddAdult child2;
 
+
     private bool ShowAdultForm { get; set; } = false;
     private bool ShowNextForm { get; set; } = false;
     public List<Adult> Adults { get; set; } = new List<Adult>();
@@ -53,17 +54,17 @@
     private Adult Adult2 { get; set; } = new Adult();
     private String errorMessage;
 
-    private void Check()
+    private async Task CheckAsync()
     {
-        try
+        Task<bool> addressTaken = FamilyService.AddressTakenCheckAsync(Family);
+        if (!await addressTaken)
         {
-            (IFamilyService).AddressTakenCheck(Family);
             ShowAdultForm = true;
             errorMessage = "";
         }
-        catch (Exception e)
+        else
         {
-            errorMessage = e.Message;
+            setAddressTakenError();
         }
     }
 
@@ -88,9 +89,14 @@
         }
     }
 
+    private void setAddressTakenError()
+    {
+        errorMessage = "This address is already taken.";
+    }
+
     private void Save()
     {
-        IFamilyService.AddAdults(Family, Adults);
+        FamilyService.AddFamilyAsync(Family, Adults);
         NavigationManager.NavigateTo("/");
     }
 }

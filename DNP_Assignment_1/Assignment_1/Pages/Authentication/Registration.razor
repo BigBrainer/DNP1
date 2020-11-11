@@ -1,6 +1,6 @@
 ﻿@page "/register"
 @namespace AuthComponent
-@using Assignment_1.Data.Impl
+@using Assignment_1.Authorization
 @using Assignment_1.Models
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject NavigationManager NavigationManager
@@ -10,7 +10,7 @@
         <p>You are already registered</p>
     </Authorized>
     <NotAuthorized Context="NotAuth">
-        <EditForm Model="@user" OnValidSubmit="@PerformRegister">
+        <EditForm Model="@user" OnValidSubmit="@PerformRegisterAsync">
             <div class="container-fluid d-flex flex-column align-content-center justify-content-center" style="width:30%; height:70vh;">
                 <DataAnnotationsValidator />
                 <ValidationSummary />
@@ -43,7 +43,7 @@
     private User user = new User();
     private string errorMessage;
 
-    public async Task PerformRegister()
+    public async Task PerformRegisterAsync()
     {
         try
         {

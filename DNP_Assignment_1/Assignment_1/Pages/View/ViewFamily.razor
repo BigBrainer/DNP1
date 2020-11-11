@@ -1,7 +1,7 @@
 ﻿@page "/families"
 @namespace ManageService
 @using Models
-@inject IFamilyService IFamilyService
+@inject IFamilyService FamilyService
 @attribute [Authorize(Policy = "MustBeAtLeastSecurityLevel1")]
 
 @if (families == null)
@@ -21,17 +21,23 @@ else
                 <th>Street name</th>
                 <th>House number</th>
                 <th>Members</th>
+                <AuthorizeView Policy="MustBeAdministrator">
+                    <th>Delete</th>
+                </AuthorizeView>
             </tr>
         </thead>
         <tbody>
-            @for(int i = 0; i<families.Count; i++)
+            @foreach(Family fam in families)
             {
-                    <tr>
-                        <td>@(families[i].Adults.Any() ? @families[i].Adults.FirstOrDefault().LastName : "No adults registered")</td>
-                        <td>@families[i].StreetName</td>
-                        <td>@families[i].HouseNumber</td>
-                        <td>@CalculateMembers(i) </td>
-                    </tr>
+            <tr>
+                <td>@(fam.Adults.Any() ? @fam.Adults.FirstOrDefault().LastName : "No adults registered")</td>
+                <td>@fam.StreetName</td>
+                <td>@fam.HouseNumber</td>
+                <td>@fam.CalculateMembers(fam)</td>
+                 <AuthorizeView Policy="MustBeAdministrator">
+                <td><button class="oi oi-trash" @onclick="(async () => await RemoveFamilyAsync(fam))"></button></td>
+                </AuthorizeView>
+            </tr>
             }
         </tbody>
     </table>
@@ -41,21 +47,14 @@ else
     private IList<Family> families;
 
 
-    protected override void OnInitialized()
+    protected async override Task OnInitializedAsync()
     {
-        families = IFamilyService.LoadFamily();
+        families = await FamilyService.LoadFamilyAsync();
     }
 
-    private int CalculateMembers(int i)
+    private async Task RemoveFamilyAsync(Family family)
     {
-        if (families[i].Children == null)
-        {
-            return families[i].Adults.Count;
-        }
-        else
-        {
-            return families[i].Children.Count + families[i].Adults.Count;
-        }
+        families.Remove(families.FirstOrDefault(fam => fam.StreetName.Equals(family.StreetName) && fam.HouseNumber == family.HouseNumber));
+        await FamilyService.RemoveFamilyAsync(family);
     }
-
 }

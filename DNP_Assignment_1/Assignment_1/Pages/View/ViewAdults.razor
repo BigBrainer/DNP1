@@ -2,7 +2,7 @@
 @namespace ViewComponent
 @using Models
 @using ManageService
-@inject IFamilyService IFamilyService
+@inject IFamilyService FamilyService
 @attribute [Authorize(Policy = "MustBeAtLeastSecurityLevel1")]
 <h3></h3>
 
@@ -16,14 +16,14 @@ else if (!families.Any())
 }
 else
 {
-    <div>
+    <div class="d-flex flex-column">
         <label for="AgeFilter">Filter by age</label>
-        <input type="radio" name="filter" id="AgeFilter" @onchange="() => LockOnAgeFilter()"/>
-        <input type="text" id="AgeFilterText" hidden="@(!FilterByAgePrompt)" @bind-value="AgeToFilter" @oninput="(args) => FilterAge(args)" />
+        <input type="text" id="AgeFilterText" @oninput="(args) => FilterAge(args)" />
+        <p style="color:red">@ageError</p>
 
         <label for="NameFilter">Filter by surname</label>
-        <input type="radio" name="filter" id="NameFilter" @onchange="() => LockOnNameFilter()"/>
-        <input type="text" id="NameFilterText" hidden="@(!FilterByNamePrompt)" @bind-value="NameToFilter" @oninput="(args) => FilterName(args)"/>
+        <input type="text" id="NameFilterText" @oninput="(args) => FilterSurname(args)" />
+        <p style="color:red">@surnameError</p>
     </div>
     <table class="table">
         <thead>
@@ -37,40 +37,31 @@ else
                 <th>Age</th>
                 <th>Weight</th>
                 <th>Height</th>
-                <th>Street name</th>
-                <th>House number</th>
                 <AuthorizeView Policy="MustBeAdministrator">
                     <th>Remove</th>
                 </AuthorizeView>
             </tr>
         </thead>
+
         <tbody>
-            @foreach (Family fam in families)
+            @foreach (Adult adult in adultsToShow)
             {
-                @foreach (Adult adult in fam.Adults.Where(ad =>
-               {
-                   return (FilterByAge) && ad.Age.ToString().Contains(AgeToFilter) || (FilterByName) && ad.LastName.Contains(NameToFilter, StringComparison.InvariantCultureIgnoreCase) || (!FilterByAge) && (!FilterByName);
-
-               }
-      ))
                 {
-            <tr>
-                <td>@adult.Id</td>
-                <td>@adult.FirstName</td>
-                <td>@adult.LastName</td>
-                <td>@adult.Sex</td>
-                <td>@adult.HairColor</td>
-                <td>@adult.EyeColor</td>
-                <td>@adult.Age</td>
-                <td>@adult.Weight</td>
-                <td>@adult.Height</td>
-                <td>@fam.StreetName</td>
-                <td>@fam.HouseNumber</td>
-                <AuthorizeView Policy="MustBeAdministrator">
-                    <td><button class="oi oi-trash" @onclick="(() => RemoveAdult(adult.Id))"></button></td>
-                </AuthorizeView>
+                    <tr>
+                        <td>@adult.Id</td>
+                        <td>@adult.FirstName</td>
+                        <td>@adult.LastName</td>
+                        <td>@adult.Sex</td>
+                        <td>@adult.HairColor</td>
+                        <td>@adult.EyeColor</td>
+                        <td>@adult.Age</td>
+                        <td>@adult.Weight</td>
+                        <td>@adult.Height</td>
+                        <AuthorizeView Policy="MustBeAdministrator">
+                            <td><button class="oi oi-trash" @onclick="(() => RemoveAdultAsync(adult.Id))"></button></td>
+                        </AuthorizeView>
 
-            </tr>
+                    </tr>
                 }
             }
         </tbody>
@@ -79,82 +70,80 @@ else
 
 @code {
     private IList<Family> families;
-    private bool FilterByAge { get; set; } = false;
-    private bool FilterByAgePrompt { get; set; } = false;
-    private bool FilterByName { get; set; } = false;
-    private bool FilterByNamePrompt { get; set; } = false;
-    [Parameter]
-    public string AgeToFilter { get; set; }
-    [Parameter]
-    public string NameToFilter { get; set; }
+    private IList<Adult> adultsToShow;
+    private string ageError = "";
+    private string surnameError = "";
+    private delegate bool FilterDelegate(Family family, Adult adult);
 
-    private void LockOnNameFilter()
+
+
+    private string? filterBySurname = null;
+    private string? filterByAge = null;
+
+    //Get all the adults from each family
+
+    protected async override Task OnInitializedAsync()
     {
-        if (AnyFilterOn())
-        {
-            TurnOffPrompt();
-        }
-        TurnOffFilter();
-        FilterByNamePrompt = true;
-        AgeToFilter = "";
+        families = await FamilyService.LoadFamilyAsync();
+        adultsToShow = CreateListOfSpecifiedAdults((family, adult) => true);
     }
 
-    private void LockOnAgeFilter()
+    private IList<Adult> CreateListOfSpecifiedAdults(FilterDelegate del)
     {
-        if (AnyFilterOn())
+        IList<Adult> adultsToShow = new List<Adult>();
+        foreach (Family family in families)
         {
-            TurnOffPrompt();
-        }
-        TurnOffFilter();
-        FilterByAgePrompt = true;
-        NameToFilter = "";
-    }
-
-    protected override void OnInitialized()
-    {
-        families = IFamilyService.LoadFamily();
-    }
-
-    private void RemoveAdult(int id)
-    {
-        Family familyToRemoveFrom = families.FirstOrDefault((fam) => fam.Adults.Any(ad => ad.Id == id));
-        for (int i = 0; i < familyToRemoveFrom.Adults.Count; i++)
-        {
-            if (familyToRemoveFrom.Adults[i].Id == id)
+            foreach (Adult ad in family.Adults)
             {
-                familyToRemoveFrom.Adults.RemoveAt(i);
+                if (del(family, ad))
+                {
+                    adultsToShow.Add(ad);
+                }
             }
         }
-        IFamilyService.RemoveMember(familyToRemoveFrom, id);
+        return adultsToShow;
     }
 
-    private void TurnOffFilter()
+    private async Task RemoveAdultAsync(int id)
     {
-        FilterByAge = false;
-        FilterByName = false;
-    }
-
-    private void TurnOffPrompt()
-    {
-        FilterByAgePrompt = false;
-        FilterByNamePrompt = false;
-    }
-
-    private bool AnyFilterOn()
-    {
-        return FilterByAgePrompt || FilterByNamePrompt;
+        await FamilyService.RemoveMemberAsync(id);
+        adultsToShow.Remove(adultsToShow.FirstOrDefault(ad => ad.Id == id));
     }
 
     private void FilterAge(ChangeEventArgs args)
     {
-        FilterByAge = true;
-        AgeToFilter = args.Value.ToString();
+        ageError = "";
+        filterByAge = args.Value.ToString();
+        if (String.IsNullOrEmpty(filterByAge))
+        {
+            filterByAge = null;
+        }
+        else if (filterByAge.Any(char.IsLetter))
+        {
+            ageError = "Input a number, please";
+        }
+        ExecuteFilter();
     }
 
-    private void FilterName(ChangeEventArgs args)
+    private void FilterSurname(ChangeEventArgs args)
     {
-        FilterByName = true;
-        NameToFilter = args.Value.ToString();
+        surnameError = "";
+        filterBySurname = args.Value.ToString();
+        if (String.IsNullOrEmpty(filterBySurname))
+        {
+            filterBySurname = null;
+        }
+        else if (filterBySurname.Any(char.IsDigit))
+        {
+            surnameError = "Input only letters, please";
+        }
+        ExecuteFilter();
+
     }
 
+    private void ExecuteFilter()
+    {
+        adultsToShow = CreateListOfSpecifiedAdults((family, adult) => (filterByAge != null && adult.Age.ToString().Equals(filterByAge) || filterByAge == null) &&
+               (filterBySurname != null && adult.LastName.ToLower().Contains(filterBySurname.ToLower()) || filterBySurname == null));
+    }
 }
