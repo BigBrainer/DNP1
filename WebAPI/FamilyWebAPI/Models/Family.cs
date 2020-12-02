@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
-namespace Models
+namespace API.Models
 {
     public class Family
     {
@@ -15,10 +15,10 @@ namespace Models
         [JsonPropertyName("HouseNumber")]
         public int HouseNumber { get; set; }
         [JsonPropertyName("Adults")]
-        public List<Adult> Adults { get; set; }
-        [JsonPropertyName("Children")]
+        public ICollection<Adult> Adults { get; set; }
+        [JsonIgnore]
         public List<Child> Children { get; set; }
-        [JsonPropertyName("Pets")]
+        [JsonIgnore]
         public List<Pet> Pets { get; set; }
         public Family()
         {

@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace Models {
+namespace API.Models {
 public class ChildInterest {
     public int ChildId { get; set; }
     [JsonIgnore]

@@ -47,7 +47,7 @@
     {
         try
         {
-            ((CustomAuthenticationStateProvider)AuthenticationStateProvider).Register(user);
+            await ((CustomAuthenticationStateProvider)AuthenticationStateProvider).Register(user);
             NavigationManager.NavigateTo("/");
         }
         catch (Exception e)

@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 namespace Assignment_1.Authorization
 {
     public class AuthenticationService : IAuthenticationService
-    { 
+    {
         readonly private string uri = "http://localhost:5003/api/User";
         readonly private HttpClient client;
 
@@ -23,7 +23,7 @@ namespace Assignment_1.Authorization
             client = new HttpClient();
         }
 
-    public async Task<User> ValidateUserAsync(string username, string password)
+        public async Task<User> ValidateUserAsync(string username, string password)
         {
             string passwordSerialized = JsonSerializer.Serialize(password);
             StringContent content = new StringContent(
@@ -31,8 +31,8 @@ namespace Assignment_1.Authorization
                 Encoding.UTF8,
                 "application/json"
             );
-           HttpResponseMessage response = await client.PostAsync($"{uri}/login?username={username}", content);
-            if(response.StatusCode == HttpStatusCode.OK)
+            HttpResponseMessage response = await client.PostAsync($"{uri}/login?username={username}", content);
+            if (response.StatusCode == HttpStatusCode.OK)
             {
                 string userAsJson = await response.Content.ReadAsStringAsync();
                 User resultUser = JsonSerializer.Deserialize<User>(userAsJson);
@@ -49,7 +49,11 @@ namespace Assignment_1.Authorization
                 Encoding.UTF8,
                 "application/json"
                 );
-            await client.PostAsync(uri, content);
+            HttpResponseMessage response = await client.PostAsync(uri, content);
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                throw new Exception("Username already taken!");
+            }
         }
     }
 }

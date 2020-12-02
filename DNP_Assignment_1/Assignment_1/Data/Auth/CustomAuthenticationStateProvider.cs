@@ -69,7 +69,6 @@ namespace Assignment_1.Authorization
             ClaimsIdentity identity = new ClaimsIdentity();
             try
             {
-                await authenticationService.RegisterUserAsync(user);
                 if(user.Department.Equals("Administrator"))
                 {
                     user.SecurityLevel = 2;
@@ -77,6 +76,14 @@ namespace Assignment_1.Authorization
                 else
                 {
                     user.SecurityLevel = 1;
+                }
+                try
+                {
+                    await authenticationService.RegisterUserAsync(user);
+                }
+                catch(Exception e)
+                {
+                    throw e;
                 }
                 identity = SetupClaimsForUser(user);
                 string serialisedData = JsonSerializer.Serialize(user);

@@ -57,13 +57,15 @@
     private async Task CheckAsync()
     {
         Task<bool> addressTaken = FamilyService.AddressTakenCheckAsync(Family);
+            ShowAdultForm = true;
         if (!await addressTaken)
         {
-            ShowAdultForm = true;
+
             errorMessage = "";
         }
         else
         {
+            ShowAdultForm = false;
             setAddressTakenError();
         }
     }

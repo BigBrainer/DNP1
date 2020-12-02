@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using FamilyWebAPI.Data;
 using Microsoft.AspNetCore.Mvc;
-using Models;
+using API.Models;
+using FamilyWebAPI.DataAccess;
 
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -13,15 +13,15 @@ namespace FamilyWebAPI.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    
+
     public class FamiliesController : ControllerBase
     {
 
-        private IFamilyService service;
+        private IFamilyRepository familyRepo;
 
-        public FamiliesController(IFamilyService service)
+        public FamiliesController(IFamilyRepository familyRepo)
         {
-            this.service = service;
+            this.familyRepo = familyRepo;
         }
 
         /// <summary>
@@ -32,14 +32,14 @@ namespace FamilyWebAPI.Controllers
         /// <param name="numberOfAdults">Number of adults</param>
         /// <returns></returns>
         [HttpGet]
-        public async Task<ActionResult<Family>> GetFamiliesWithQueryAsync([FromQuery] string? streetName, [FromQuery] int? houseNumber, [FromQuery] int? numberOfAdults)
+        public async Task<ActionResult<IList<Family>>> GetFamiliesWithQueryAsync([FromQuery] string? streetName, [FromQuery] int? houseNumber)
         {
             try
             {
-                IList<Family> families = await service.LoadFamilyAsync(streetName, houseNumber, numberOfAdults);
-                return Ok(families);
+                IList<Family> family = await familyRepo.GetFamiliesAsync(houseNumber, streetName);
+                return Ok(family);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Console.WriteLine(e);
                 return StatusCode(500, e.Message);
@@ -54,26 +54,15 @@ namespace FamilyWebAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Family>> AddFamilyAsync([FromBody] Family family)
         {
-            if(!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
             try
             {
-                if (!await service.AddressTakenCheckAsync(family))
-                {
-                    Family addedFamily = await service.AddFamilyAsync(family);
-                    return Ok(family);
-                }
-                else
-                {
-                    return StatusCode(500, "The house number on this street is already taken!");
-                }
+              Family addedFamily = await familyRepo.AddFamilyAsync(family);
+              return Ok(addedFamily);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Console.WriteLine(e);
-                return StatusCode(500, e.Message);
+                return StatusCode(500, "Could not add family!");
             }
         }
 
@@ -89,10 +78,10 @@ namespace FamilyWebAPI.Controllers
         {
             try
             {
-                await service.RemoveFamilyAsync(streetName,houseNumber);
+                await familyRepo.RemoveFamilyAsync(houseNumber, streetName);
                 return Ok();
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Console.WriteLine(e);
                 return StatusCode(500, "Could not delete this family");
@@ -105,12 +94,12 @@ namespace FamilyWebAPI.Controllers
         /// <param name="id">Id of adult to remove</param>
         /// <returns></returns>
         [HttpDelete]
-        [Route ("adults")]
+        [Route("adults")]
         public async Task<ActionResult> DeleteAdultAsync([FromQuery] int id)
         {
             try
             {
-                await service.RemoveMemberAsync(id);
+                await familyRepo.RemoveMemberAsync(id);
                 return Ok();
             }
             catch (Exception e)
@@ -119,6 +108,5 @@ namespace FamilyWebAPI.Controllers
                 return StatusCode(500, "Could not delete this adult");
             }
         }
-
     }
 }

@@ -24,13 +24,13 @@ namespace Assignment_1.Data.FamilyService
 
         public async Task AddFamilyAsync(Family family, IList<Adult> adults)
         {
-            foreach(Adult ad in adults)
+            foreach (Adult ad in adults)
             {
                 family.Adults.Add(ad);
             }
             family.Pets = new List<Pet>();
             family.Children = new List<Child>();
-            string familySerialized = JsonSerializer.Serialize(family, new JsonSerializerOptions { WriteIndented = true});
+            string familySerialized = JsonSerializer.Serialize(family, new JsonSerializerOptions { WriteIndented = true });
             Console.WriteLine(familySerialized);
             StringContent content = new StringContent(
                 familySerialized,
@@ -46,9 +46,8 @@ namespace Assignment_1.Data.FamilyService
             int houseNumber = family.HouseNumber;
             string streetName = family.StreetName;
             streetName.Replace(" ", "%");
-            Task<string> stringAsync = client.GetStringAsync($"{uri}/Families?housenumber={houseNumber}&streetname={streetName}");
-            string message = await stringAsync;
-            return (!message.Equals("[]"));
+            HttpResponseMessage response = await client.GetAsync($"{uri}/Families?housenumber={houseNumber}&streetname={streetName}");
+            return response.StatusCode != System.Net.HttpStatusCode.InternalServerError;
         }
         private async Task<int> LastIdAsync()
         {
@@ -65,6 +64,7 @@ namespace Assignment_1.Data.FamilyService
         {
             Task<string> stringAsync = client.GetStringAsync(uri + "/Families");
             string message = await stringAsync;
+            Console.WriteLine(message);
             List<Family> response = JsonSerializer.Deserialize<List<Family>>(message);
             return response;
         }

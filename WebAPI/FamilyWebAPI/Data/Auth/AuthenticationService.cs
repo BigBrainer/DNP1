@@ -1,4 +1,4 @@
-﻿using Models;
+﻿/*using Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.FileSystemGlobbing.Internal.PathSegments;
 using System;
@@ -15,7 +15,7 @@ namespace Data.Impl
     {
         private List<User> Users { get; set; }
 
-
+        
         public AuthenticationService()
         {
             Users = ReadObject();
@@ -66,3 +66,4 @@ namespace Data.Impl
 
     }
 }
+*/

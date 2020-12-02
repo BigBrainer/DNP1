@@ -6,7 +6,7 @@ using Data;
 using Data.Impl;
 using Data.Intf;
 using FamilyWebAPI.Data;
-using ManageService;
+using FamilyWebAPI.DataAccess;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Hosting;
@@ -32,8 +32,9 @@ namespace FamilyWebAPI
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            services.AddSingleton<IFamilyService, FamilyServiceTextFile>();
-            services.AddScoped<IAuthenticationService, AuthenticationService>();
+            services.AddDbContext<FamilyDBContext>();
+            services.AddScoped<IFamilyRepository, FamilyRepository>();
+            services.AddScoped<IAuthenticationService, AuthenticationServiceDb>();
             services.AddSwaggerDocument();
         }
 

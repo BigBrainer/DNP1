@@ -1,17 +1,16 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.Json.Serialization;
 
-namespace Models
+namespace API.Models
 {
     public class Person
     {
-
-
-        [JsonPropertyName("Id")]
         public int Id { get; set; }
+
         [Required(ErrorMessage = "Enter a first name"), NotNull]
         [MinLength(2, ErrorMessage = "Enter a valid name")]
         [MaxLength(40, ErrorMessage = "Name too long")]
@@ -42,6 +41,7 @@ namespace Models
         [NotNull, ValidSex, Required(ErrorMessage = "Enter a sex")]
         [JsonPropertyName("Sex")]
         public string Sex { get; set; }
+
 
         public void Update(Person toUpdate)
         {

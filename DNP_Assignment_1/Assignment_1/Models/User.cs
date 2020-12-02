@@ -24,22 +24,22 @@ namespace Assignment_1.Models
         [JsonPropertyName("Department")]
         public string Department { get; set; }
         [JsonPropertyName("SecurityLevel")]
-        public int SecurityLevel { get; set; }
-    }
+        public int SecurityLevel{ get; set; }
 
-    public class ValidPassword : ValidationAttribute
-    {
-        protected override ValidationResult IsValid(object value, ValidationContext validationContext)
+        public class ValidPassword : ValidationAttribute
         {
-            if (!value.ToString().Any(char.IsUpper))
+            protected override ValidationResult IsValid(object value, ValidationContext validationContext)
             {
-                return new ValidationResult("Password must contain at least 1 uppercase letter");
+                if (!value.ToString().Any(char.IsUpper))
+                {
+                    return new ValidationResult("Password must contain at least 1 uppercase letter");
+                }
+                else if (!value.ToString().Any(char.IsDigit))
+                {
+                    return new ValidationResult("Password must contain at least 1 digit");
+                }
+                return ValidationResult.Success;
             }
-            else if(!value.ToString().Any(char.IsDigit))
-            {
-                return new ValidationResult("Password must contain at least 1 digit");
-            }
-            return ValidationResult.Success;
         }
     }
 }

@@ -9,7 +9,7 @@ using Data.Intf;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Models;
+using API.Models;
 using IAuthenticationService = Data.Intf.IAuthenticationService;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -33,7 +33,7 @@ namespace FamilyWebAPI.Controllers
         /// <param name="user">User being registered</param>
         /// <returns>User for the client</returns>
         [HttpPost]
-        public async Task<ActionResult<User>> RegisterAsync([FromBody] User user)
+        public async Task<ActionResult> RegisterAsync([FromBody] User user)
         {
             if (!ModelState.IsValid)
             {
@@ -42,7 +42,7 @@ namespace FamilyWebAPI.Controllers
             try
             {
                 await service.RegisterUserAsync(user);
-                return Ok(user);
+                return Ok();
             }
             catch (Exception e)
             {
